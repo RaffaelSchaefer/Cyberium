@@ -1,4 +1,4 @@
 displayName = Cyberium
 author = Robin Dabank
-version = 0.1.4
+version = 0.1.4.1
 homepage = https://raffaelschaefer.myportfolio.com/
