@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace Cyberium.Items
 {
-	public class Cables : ModItem
+	public class Cable : ModItem
 	{
 		public override void SetStaticDefaults() 
 		{
