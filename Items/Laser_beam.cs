@@ -6,26 +6,27 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
 using Terraria.Enums;
- 
-namespace TutorialMOD.Projectiles
+
+namespace Cyberium.Items
 {
     public class Laser_beam : ModProjectile
     {
         private Vector2 _targetPos;         //Ending position of the laser beam
         private int _charge;                //The charge level of the weapon
         private float _moveDist = 45f;       //The distance charge particle from the player center
- 
+
         public override void SetDefaults()
         {
             projectile.width = 10;
             projectile.height = 10;
-            projectile.friendly = true;     //this defines if the projectile is frendly
+            projectile.friendly = false;     //this defines if the projectile is frendly
             projectile.penetrate = -1;  //this defines the projectile penetration, -1 = infinity
             projectile.tileCollide = false;   //this defines if the tile can colide with walls
             projectile.magic = true;
             projectile.hide = true;
+			projectile.damage = 50;
         }
- 
+
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (_charge == 100)
@@ -35,9 +36,9 @@ namespace TutorialMOD.Projectiles
                 DrawLaser(spriteBatch, Main.projectileTexture[projectile.type], Main.player[projectile.owner].Center, unit, 5, projectile.damage, -1.57f, 1f, 1000f, Color.White, 45);// this is the projectile sprite draw, 45 = the distance of where the projectile starts from the player
             }
             return false;
- 
+
         }
- 
+
         /// <summary>
         /// The core function of drawing a laser
         /// </summary>
@@ -45,7 +46,7 @@ namespace TutorialMOD.Projectiles
         {
             Vector2 origin = start;
             float r = unit.ToRotation() + rotation;
- 
+
             #region Draw laser body
             for (float i = transDist; i <= _moveDist; i += step)
             {
@@ -54,20 +55,21 @@ namespace TutorialMOD.Projectiles
                 spriteBatch.Draw(texture, origin - Main.screenPosition,
                     new Rectangle(0, 26, 28, 26), i < transDist ? Color.Transparent : c, r,
                     new Vector2(28 / 2, 26 / 2), scale, 0, 0);
+					Lighting.AddLight(projectile.Center, 0.9f, 0.1f, 0.3f);
             }
             #endregion
- 
+
             #region Draw laser tail
             spriteBatch.Draw(texture, start + unit * (transDist - step) - Main.screenPosition,
                 new Rectangle(0, 0, 28, 26), Color.White, r, new Vector2(28 / 2, 26 / 2), scale, 0, 0);
             #endregion
- 
+
             #region Draw laser head
             spriteBatch.Draw(texture, start + (_moveDist + step) * unit - Main.screenPosition,
                 new Rectangle(0, 52, 28, 26), Color.White, r, new Vector2(28 / 2, 26 / 2), scale, 0, 0);
             #endregion
         }
- 
+
         /// <summary>
         /// Change the way of collision check of the projectile
         /// </summary>
@@ -86,7 +88,7 @@ namespace TutorialMOD.Projectiles
             }
             return false;
         }
- 
+
         /// <summary>
         /// Change the behavior after hit a NPC
         /// </summary>
@@ -94,16 +96,16 @@ namespace TutorialMOD.Projectiles
         {
             target.immune[projectile.owner] = 5;
         }
- 
+
         /// <summary>
         /// The AI of the projectile
         /// </summary>
         public override void AI()
         {
- 
+
             Vector2 mousePos = Main.MouseWorld;
             Player player = Main.player[projectile.owner];
- 
+
             #region Set projectile position
             if (projectile.owner == Main.myPlayer) // Multiplayer support
             {
@@ -120,8 +122,8 @@ namespace TutorialMOD.Projectiles
                 projectile.soundDelay--;
                 #endregion
             }
- 
- 
+
+
             #region Charging process
             // Kill the projectile if the player stops channeling
             if (!player.channel)
@@ -157,8 +159,8 @@ namespace TutorialMOD.Projectiles
                 }
             }
             #endregion
- 
- 
+
+
             #region Set laser tail position and dusts
             if (_charge < 100) return;
             Vector2 start = player.Center;
@@ -173,16 +175,16 @@ namespace TutorialMOD.Projectiles
                     _moveDist -= 5f;
                     break;
                 }
- 
+
                 if (projectile.soundDelay <= 0)//this is the proper sound delay for this type of weapon
                 {
                     Main.PlaySound(2, (int)projectile.Center.X, (int)projectile.Center.Y, 15);    //this is the sound when the weapon is used   cheange 15 for diferent sound
                     projectile.soundDelay = 40;    //this is the proper sound delay for this type of weapon
                 }
- 
+
             }
             _targetPos = player.Center + unit * _moveDist;
- 
+
             //dust
             for (int i = 0; i < 2; ++i)
             {
@@ -197,12 +199,12 @@ namespace TutorialMOD.Projectiles
          
             #endregion
         }
- 
+
         public override bool ShouldUpdatePosition()
         {
             return false;
         }
        
- 
+
     }
 }
